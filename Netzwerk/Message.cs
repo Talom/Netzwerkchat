@@ -14,10 +14,11 @@ namespace Netzwerk
         private String status;
         private String laenge;
         private String body;
-        private const char[] delimiter = {'|'};
+        private char[] delimiter = {'|'}; 
 
         public Message(String text)
         {
+           
            String [] array = text.Split(delimiter, 7);
            typ = array[0];
            zeit = array[1];
@@ -30,13 +31,16 @@ namespace Netzwerk
         public Message(String a, String c, String d, String e, String f)
         {
             typ = a;
+            if(c != null)
             version = c;
+
             nick = d;
             status = e;
             body = f;
         }
 
-        public String ToString()
+
+        public override String ToString()
         {
             return typ + "|" + zeit + "|" + version + "|" + nick + "|" + status + "|" + laenge + "|" + body;
         }

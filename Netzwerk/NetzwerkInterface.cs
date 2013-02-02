@@ -43,19 +43,25 @@ namespace Netzwerk
        private Thread udpThread;
        public static event StatusChangedEventHandler StatusChanged;
        private static StatusChangedEventArgs e;
+       private int port;
 
 
 
        public NetzwerkInterface()
        {
+           port = 3000;
            System.Diagnostics.Debug.WriteLine("Konstruktor");
-           this.tcpListener = new TcpListener(IPAddress.Any, 3000);
+           //this.tcpListener = new TcpListener(IPAddress.Any, port);
+           this.tcpListener = new TcpListener(IPAddress.Any, 3001);
            this.listenThread = new Thread(new ThreadStart(ListenForClients));
+           this.listenThread.IsBackground = true;
            this.listenThread.Start();
 
-           IPEndPoint ep = new IPEndPoint(IPAddress.Any, 3000);
+           //IPEndPoint ep = new IPEndPoint(IPAddress.Any, port);
+           IPEndPoint ep = new IPEndPoint(IPAddress.Any, 3001);
            this.udpListener = new UdpClient(ep);
            this.udpThread = new Thread(new ThreadStart(ListenForBroadcast));
+           this.udpThread.IsBackground = true;
            this.udpThread.Start();
        }
 
@@ -70,7 +76,7 @@ namespace Netzwerk
        }
        public void sendBroadcast(String text)
        { 
-            IPEndPoint ep = new IPEndPoint(IPAddress.Any, 3000);
+            IPEndPoint ep = new IPEndPoint(IPAddress.Any, port);
             UdpClient client = new UdpClient(ep);
             UnicodeEncoding encoder = new UnicodeEncoding();
             Byte[] msg = encoder.GetBytes(text);
@@ -80,7 +86,7 @@ namespace Netzwerk
        {
            e = new StatusChangedEventArgs("User: " + text);
            OnStatusChanged(e);
-           TcpClient client = new TcpClient(ip, 3000);
+           TcpClient client = new TcpClient(ip, port);
            NetworkStream stream = client.GetStream();
 
            byte[] message = new byte[4096];
@@ -94,7 +100,7 @@ namespace Netzwerk
 
        private void ListenForBroadcast()
        {
-           IPEndPoint ep = new IPEndPoint(IPAddress.Any, 3000);
+           IPEndPoint ep = new IPEndPoint(IPAddress.Any, port);
            while (true)
            {
               Byte [] message = this.udpListener.Receive(ref ep);
@@ -153,20 +159,7 @@ namespace Netzwerk
                System.Diagnostics.Debug.WriteLine(encoder.GetString(message, 0, bytesRead));
 
                String text = encoder.GetString(message, 0, bytesRead);
-
-               //Protokoll kommt zur Anwendung
-                   //if (text == "Pipapo")
-                   //{
-                   //    System.Diagnostics.Debug.WriteLine("Schreibe Protokollantwort");
-                   //    byte[] buffer = encoder.GetBytes("Hello Client!");
-                   //    clientStream.Write(buffer, 0, buffer.Length);
-                   //    clientStream.Flush();
-                   //}
-
-                   //else
-                   //{
-                   //    System.Diagnostics.Debug.WriteLine("unbekanntes Protokoll");
-                   //}
+               break;
            }
 
            tcpClient.Close();

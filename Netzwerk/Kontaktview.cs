@@ -75,7 +75,7 @@ namespace Netzwerk
 
         private void button1_Click(object sender, EventArgs e)
         {
-            connection.sendMessage("Server, bist du da?");
+            connection.sendMessage("Server, bist du da?", "127.0.0.1");
         }
     }
 }

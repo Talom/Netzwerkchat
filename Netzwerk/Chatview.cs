@@ -11,19 +11,18 @@ namespace Netzwerk
 {
     public partial class Chatview : Form
     {
+        NetzwerkInterface connection;
         public Chatview()
         {
             InitializeComponent();
+            connection = new NetzwerkInterface();
         }
 
-     
-
-       
-
-        private void button1_Click(object sender, EventArgs e)
+        private void send_btn_Click(object sender, EventArgs e)
         {
-            NetzwerkInterface connection = new NetzwerkInterface();
-            connection.sendMessage("Server, bist du da?");
+            Message nachricht = new Message("MSG", "", "Björn", "ONL", this.textBox1.Text + textBox1.Text.Length);
+            connection.sendMessage(nachricht.ToString(), "127.0.0.1");
         }
+
     }
 }

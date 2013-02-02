@@ -17,6 +17,9 @@ namespace Spiegelserver
            int x;
            x = Convert.ToInt32(Console.ReadLine());
            network nt = new network(x);
+           Console.WriteLine("Trololo");
+           Console.ReadLine();
+
 
         }
     }
@@ -25,15 +28,33 @@ namespace Spiegelserver
         private TcpListener tcpListener;
         private UdpClient udpClient;
         private Thread listenThread;
+        private Thread udpThread;
+        IPEndPoint ep;
 
         public network(int port)
         {
             this.tcpListener = new TcpListener(IPAddress.Any, port);
             this.listenThread = new Thread(new ThreadStart(ListenForClients));
+            //listenThread.IsBackground = true;
             this.listenThread.Start();
+            ep = new IPEndPoint(IPAddress.Any, port);
+            this.udpClient = new UdpClient(ep);
+            this.udpThread = new Thread(new ThreadStart(ListenforBroadcasts));
+            //udpThread.IsBackground = true;
+            udpThread.Start();
         }
 
+        private void ListenforBroadcasts()
+        {
+            while (true)
+            {
+                Byte [] array = udpClient.Receive(ref ep);
 
+                UnicodeEncoding encoder = new UnicodeEncoding();
+                System.Console.WriteLine(encoder.GetString(array));
+
+            }
+        }
         private void ListenForClients()
         {
             System.Console.WriteLine("Ich hör jetzt zu");
@@ -83,22 +104,6 @@ namespace Spiegelserver
                 //message has successfully been received
                 UnicodeEncoding encoder = new UnicodeEncoding();
                 System.Console.WriteLine(encoder.GetString(message, 0, bytesRead));
-
-                String text = encoder.GetString(message, 0, bytesRead);
-
-                //Protokoll kommt zur Anwendung
-                if (text == "Pipapo")
-                {
-                    System.Console.WriteLine("Schreibe Protokollantwort");
-                    byte[] buffer = encoder.GetBytes("Hello Client!");
-                    clientStream.Write(buffer, 0, buffer.Length);
-                    clientStream.Flush();
-                }
-
-                else
-                {
-                    System.Console.WriteLine("unbekanntes Protokoll");
-                }
             }
 
             tcpClient.Close();
