@@ -31,7 +31,7 @@ namespace Netzwerk
         public Message(String a, String c, String d, String e, String f)
         {
             typ = a;
-            if(c != null)
+            if(c != "")
             version = c;
 
             nick = d;
@@ -39,9 +39,16 @@ namespace Netzwerk
             body = f;
         }
 
+        private void setLaenge()
+        {
+            int x = (typ.Length + zeit.Length + version.Length + nick.Length + status.Length + body.Length);
+            laenge = x.ToString();
+        }
 
         public override String ToString()
         {
+            setZeit();
+            setLaenge();
             return typ + "|" + zeit + "|" + version + "|" + nick + "|" + status + "|" + laenge + "|" + body;
         }
 

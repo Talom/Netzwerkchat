@@ -20,7 +20,7 @@ namespace Netzwerk
 
         private void send_btn_Click(object sender, EventArgs e)
         {
-            Message nachricht = new Message("MSG", "", "Björn", "ONL", this.textBox1.Text + textBox1.Text.Length);
+            Message nachricht = new Message("MSG", "", "Björn", "ONL", this.textBox1.Text);
             connection.sendMessage(nachricht.ToString(), "127.0.0.1");
         }
 
