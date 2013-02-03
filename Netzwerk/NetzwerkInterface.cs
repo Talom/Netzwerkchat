@@ -76,11 +76,12 @@ namespace Netzwerk
        }
        public void sendBroadcast(String text)
        { 
-            IPEndPoint ep = new IPEndPoint(IPAddress.Any, port);
-            UdpClient client = new UdpClient(ep);
+           // IPEndPoint ep = new IPEndPoint(IPAddress.Broadcast, port);
+            //UdpClient client = new UdpClient(ep);
             UnicodeEncoding encoder = new UnicodeEncoding();
             Byte[] msg = encoder.GetBytes(text);
-            client.Send(msg, msg.Length);
+            udpListener.Send(msg, msg.Length);
+            //client.Close();
        }
        public void sendMessage(String text, String ip)
        {
@@ -100,7 +101,7 @@ namespace Netzwerk
 
        private void ListenForBroadcast()
        {
-           IPEndPoint ep = new IPEndPoint(IPAddress.Any, port);
+           IPEndPoint ep = new IPEndPoint(IPAddress.Broadcast, port);
            while (true)
            {
               Byte [] message = this.udpListener.Receive(ref ep);

@@ -61,6 +61,22 @@ namespace Netzwerk
         {
             zeit = System.DateTime.Now.ToString();
         }
+        public String getZeit()
+        {
+            if (zeit != "")
+            {
+                return zeit;
+            }
+            else 
+            {
+                setZeit();
+                return zeit;
+            }
+        }
+        public String getUser()
+        {
+            return nick;
+        }
 
 
 
