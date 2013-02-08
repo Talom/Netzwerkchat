@@ -8,32 +8,6 @@ using System.Net.Sockets;
 
 namespace Netzwerk
 {
-    public class StatusChangedEventArgs : EventArgs
-    {
-        // The argument we're interested in is a message describing the event
-        private string EventMsg;
-
-        // Property for retrieving and setting the event message
-        public string EventMessage
-        {
-            get
-            {
-                return EventMsg;
-            }
-            set
-            {
-                EventMsg = value;
-            }
-        }
-
-        // Constructor for setting the event message
-        public StatusChangedEventArgs(string strEventMsg)
-        {
-            EventMsg = strEventMsg;
-        }
-    }
-    public delegate void StatusChangedEventHandler(object sender, StatusChangedEventArgs e);
-
 
     public class NetzwerkInterface
     {
@@ -41,14 +15,14 @@ namespace Netzwerk
        private UdpClient udpListener;
        private Thread listenThread;
        private Thread udpThread;
-       public static event StatusChangedEventHandler StatusChanged;
-       private static StatusChangedEventArgs e;
        private int port;
 
-
+       public delegate void delMessageRecieved(Message msg);
+       public delMessageRecieved OnMessageRecieved;
 
        public NetzwerkInterface()
        {
+           OnMessageRecieved += delegate(Message msg) { };
            port = 3000;
            System.Diagnostics.Debug.WriteLine("Konstruktor");
            //this.tcpListener = new TcpListener(IPAddress.Any, port);
@@ -65,28 +39,28 @@ namespace Netzwerk
            this.udpThread.Start();
        }
 
-       public static void OnStatusChanged(StatusChangedEventArgs e)
-       {
-           StatusChangedEventHandler statusHandler = StatusChanged;
-           if (statusHandler != null)
-           {
-               // Invoke the delegate
-               statusHandler(null, e);
-           }
-       }
+       //public static void OnStatusChanged(StatusChangedEventArgs e)
+       //{
+       //    StatusChangedEventHandler statusHandler = StatusChanged;
+       //    if (statusHandler != null)
+       //    {
+       //        // Invoke the delegate
+       //        statusHandler(null, e);
+       //    }
+       //}
        public void sendBroadcast(String text)
        { 
-           // IPEndPoint ep = new IPEndPoint(IPAddress.Broadcast, port);
+            IPEndPoint ep = new IPEndPoint(IPAddress.Broadcast, port);
             //UdpClient client = new UdpClient(ep);
             UnicodeEncoding encoder = new UnicodeEncoding();
             Byte[] msg = encoder.GetBytes(text);
-            udpListener.Send(msg, msg.Length);
+            udpListener.Send(msg, msg.Length, ep);
             //client.Close();
        }
        public void sendMessage(String text, String ip)
        {
-           e = new StatusChangedEventArgs("User: " + text);
-           OnStatusChanged(e);
+          // e = new StatusChangedEventArgs("User: " + text);
+           // OnStatusChanged(e);
            TcpClient client = new TcpClient(ip, port);
            NetworkStream stream = client.GetStream();
 
@@ -158,8 +132,9 @@ namespace Netzwerk
                //message has successfully been received
                UnicodeEncoding encoder = new UnicodeEncoding();
                System.Diagnostics.Debug.WriteLine(encoder.GetString(message, 0, bytesRead));
-
-               String text = encoder.GetString(message, 0, bytesRead);
+               Message msg = new Message(encoder.GetString(message, 0, bytesRead));
+               OnMessageRecieved(msg);
+               //String text = encoder.GetString(message, 0, bytesRead);
                break;
            }
 

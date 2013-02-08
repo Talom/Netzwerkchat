@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Netzwerk
 {
-    class Message
+    public class Message
     {
         private String typ;
         private String zeit;  
