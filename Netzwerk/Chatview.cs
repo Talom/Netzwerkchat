@@ -43,7 +43,7 @@ namespace Netzwerk
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Message nachricht = new Message("MSG", "", "Björn", "ONL", this.textBox1.Text);
+            Message nachricht = new Message("SOL", "", "Björn", "ONL", "Hallo ich bin der Brotkasten");
             connection.sendBroadcast(nachricht.ToString());
         }
 

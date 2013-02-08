@@ -5,10 +5,12 @@ using System.Text;
 
 namespace Netzwerk
 {
-    class Protokoll
+    public static class Protokoll
     {
-        Message msg;
-        String ipAdress;
+        public static void handlethisshit(Message msg)
+        { 
+            
+        }
 
     }
 }

@@ -23,7 +23,7 @@ namespace Netzwerk
        public NetzwerkInterface()
        {
            OnMessageRecieved += delegate(Message msg) { };
-           port = 3000;
+           port = 1234;
            System.Diagnostics.Debug.WriteLine("Konstruktor");
            //this.tcpListener = new TcpListener(IPAddress.Any, port);
            this.tcpListener = new TcpListener(IPAddress.Any, 3001);
@@ -32,7 +32,7 @@ namespace Netzwerk
            this.listenThread.Start();
 
            //IPEndPoint ep = new IPEndPoint(IPAddress.Any, port);
-           IPEndPoint ep = new IPEndPoint(IPAddress.Any, 3001);
+           IPEndPoint ep = new IPEndPoint(IPAddress.Any, port);
            this.udpListener = new UdpClient(ep);
            this.udpThread = new Thread(new ThreadStart(ListenForBroadcast));
            this.udpThread.IsBackground = true;
@@ -79,6 +79,8 @@ namespace Netzwerk
            while (true)
            {
               Byte [] message = this.udpListener.Receive(ref ep);
+              UnicodeEncoding encoder = new UnicodeEncoding();
+              System.Diagnostics.Debug.WriteLine(encoder.GetString(message, 0, message.Length));
            }
 
        }

@@ -59,7 +59,11 @@ namespace Netzwerk
 
         public void setZeit()
         {
-            zeit = System.DateTime.Now.ToString();
+            DateTime date1 = new DateTime(1970, 1, 1);  //Refernzdatum (festgelegt)
+            DateTime date2 = DateTime.Now;              //jetztiges Datum / Uhrzeit
+            TimeSpan ts = new TimeSpan(date2.Ticks - date1.Ticks);  // das Delta ermitteln
+            zeit = Convert.ToInt32(ts.TotalSeconds).ToString();
+
         }
         public String getZeit()
         {
