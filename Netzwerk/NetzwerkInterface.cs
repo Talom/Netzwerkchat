@@ -63,16 +63,23 @@ namespace Netzwerk
        {
           // e = new StatusChangedEventArgs("User: " + text);
            // OnStatusChanged(e);
-           TcpClient client = new TcpClient(ip, port);
-           NetworkStream stream = client.GetStream();
+           try
+           {
+               TcpClient client = new TcpClient(ip, port);
+               NetworkStream stream = client.GetStream();
 
-           byte[] message = new byte[4096];
-          
-              UnicodeEncoding encoder = new UnicodeEncoding();
-              message = encoder.GetBytes(text);
-           stream.Write(message, 0, message.Length);
-           stream.Flush();
-           client.Close();
+               byte[] message = new byte[4096];
+
+               UnicodeEncoding encoder = new UnicodeEncoding();
+               message = encoder.GetBytes(text);
+               stream.Write(message, 0, message.Length);
+               stream.Flush();
+               client.Close();
+           }
+           catch (Exception ex)
+           {
+               System.Diagnostics.Debug.WriteLine(ex.Message.ToString());
+           }
        }
 
        private void ListenForBroadcast()
@@ -111,7 +118,7 @@ namespace Netzwerk
            TcpClient tcpClient = (TcpClient)client;
            NetworkStream clientStream = tcpClient.GetStream();
 
-           byte[] message = new byte[4096];
+           byte[] message = new byte[2048];
            int bytesRead;
 
            while (true)
@@ -121,7 +128,7 @@ namespace Netzwerk
                try
                {
                    //blocks until a client sends a message
-                   bytesRead = clientStream.Read(message, 0, 4096);
+                   bytesRead = clientStream.Read(message, 0, 2048);
                }
                catch
                {

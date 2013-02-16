@@ -19,12 +19,14 @@ namespace Netzwerk
             kontaktliste = new Dictionary<string,string>();
             connection = new NetzwerkInterface();
             connection.OnBroadcastRecieved += OnBroadcastRecieved;
+            connection.OnMessageRecieved += OnMessage;
             
             
         }
 
         private void OnBroadcastRecieved(Message msg, String ip)
         {
+            ip = ip.Split(':')[0];
             if (!kontaktliste.ContainsKey(ip))
             {
                 kontaktliste.Add(ip, msg.getUser());
@@ -46,8 +48,19 @@ namespace Netzwerk
 
         private void OnMessage(Message msg)
         {
-            chat_txtbx.Text += "\r\n" + msg.getZeit() + ": " + msg.getUser() + ": ";
-            chat_txtbx.Text += msg.getBody();
+            if (chat_txtbx.InvokeRequired)
+            {
+                chat_txtbx.Invoke((MethodInvoker)delegate
+                    {
+                        chat_txtbx.Text += "\r\n" + msg.getZeit() + ": " + msg.getUser() + ": ";
+                        chat_txtbx.Text += msg.getBody();
+                    });
+            }
+            else 
+            {
+                chat_txtbx.Text += "\r\n" + msg.getZeit() + ": " + msg.getUser() + ": ";
+                chat_txtbx.Text += msg.getBody();
+            }
         }
 
         private void send_btn_Click(object sender, EventArgs e)
