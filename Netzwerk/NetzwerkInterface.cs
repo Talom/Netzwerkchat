@@ -19,19 +19,21 @@ namespace Netzwerk
 
        public delegate void delMessageRecieved(Message msg);
        public delMessageRecieved OnMessageRecieved;
+       public delegate void delBroadcastRecieved(Message msg, String ip);
+       public delBroadcastRecieved OnBroadcastRecieved;
 
        public NetzwerkInterface()
        {
            OnMessageRecieved += delegate(Message msg) { };
+           OnBroadcastRecieved += delegate(Message msg, String ip) { };
            port = 1234;
            System.Diagnostics.Debug.WriteLine("Konstruktor");
-           //this.tcpListener = new TcpListener(IPAddress.Any, port);
-           this.tcpListener = new TcpListener(IPAddress.Any, 3001);
+           this.tcpListener = new TcpListener(IPAddress.Any, port);
+           //this.tcpListener = new TcpListener(IPAddress.Any, 3001);
            this.listenThread = new Thread(new ThreadStart(ListenForClients));
            this.listenThread.IsBackground = true;
            this.listenThread.Start();
 
-           //IPEndPoint ep = new IPEndPoint(IPAddress.Any, port);
            IPEndPoint ep = new IPEndPoint(IPAddress.Any, port);
            this.udpListener = new UdpClient(ep);
            this.udpThread = new Thread(new ThreadStart(ListenForBroadcast));
@@ -81,6 +83,8 @@ namespace Netzwerk
               Byte [] message = this.udpListener.Receive(ref ep);
               UnicodeEncoding encoder = new UnicodeEncoding();
               System.Diagnostics.Debug.WriteLine(encoder.GetString(message, 0, message.Length));
+              Message msg = new Message(encoder.GetString(message, 0, message.Length));
+              OnBroadcastRecieved(msg, ep.ToString());
            }
 
        }

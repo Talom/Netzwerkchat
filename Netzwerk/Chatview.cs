@@ -12,13 +12,36 @@ namespace Netzwerk
     public partial class Chatview : Form
     {
         NetzwerkInterface connection;
+        Dictionary<String, String> kontaktliste; 
         public Chatview()
         {
             InitializeComponent();
+            kontaktliste = new Dictionary<string,string>();
             connection = new NetzwerkInterface();
-           // connection.handler += 
+            connection.OnBroadcastRecieved += OnBroadcastRecieved;
             
             
+        }
+
+        private void OnBroadcastRecieved(Message msg, String ip)
+        {
+            if (!kontaktliste.ContainsKey(ip))
+            {
+                kontaktliste.Add(ip, msg.getUser());
+                // kontaktlistbx.Items.AddRange(kontaktliste.Values.ToArray());
+                if (kontaktlistbx.InvokeRequired)
+                {
+                    kontaktlistbx.Invoke((MethodInvoker)delegate
+                    {
+                        kontaktlistbx.Items.AddRange(kontaktliste.Values.ToArray());
+                    }
+                    );
+                }
+                else 
+                {
+                    kontaktlistbx.Items.AddRange(kontaktliste.Values.ToArray());
+                }
+            }
         }
 
         private void OnMessage(Message msg)
@@ -29,8 +52,10 @@ namespace Netzwerk
 
         private void send_btn_Click(object sender, EventArgs e)
         {
+            int index =  kontaktlistbx.SelectedIndex;
             Message nachricht = new Message("MSG", "", "Björn", "ONL", this.textBox1.Text);
-            connection.sendMessage(nachricht.ToString(), "127.0.0.1");
+            String ip = kontaktliste.Keys.ToArray().GetValue(index).ToString();
+            connection.sendMessage(nachricht.ToString(), ip);
             //chat_txtbx.Text += "\r\n" + nachricht.getZeit()+": "+nachricht.getUser()+": ";
             //chat_txtbx.Text += nachricht.getBody();
             OnMessage(nachricht);

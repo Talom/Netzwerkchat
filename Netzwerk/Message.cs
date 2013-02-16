@@ -23,8 +23,8 @@ namespace Netzwerk
            typ = array[0];
            zeit = array[1];
            version = array[2];
-           nick = array[3];
-           status = array[4];
+           status = array[3];
+           nick = array[4];
            laenge = array[5];
            body = array[6];
         }
@@ -49,7 +49,7 @@ namespace Netzwerk
         {
             setZeit();
             setLaenge();
-            return typ + "|" + zeit + "|" + version + "|" + nick + "|" + status + "|" + laenge + "|" + body;
+            return typ + "|" + zeit + "|" + version + "|" + status + "|" + nick + "|" + laenge + "|" + body;
         }
 
         public String getBody()
